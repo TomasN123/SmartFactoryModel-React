@@ -26,9 +26,6 @@ export default function SmartFactoryHero({
   height = 600,
   palette: paletteProp = {},
   showHUD = true,
-  showTitle = true,
-  titleKicker = "MES · DevOps · Industry 4.0",
-  titleText = "Autonomous production line orchestrated from CI/CD pipeline",
   enableOrbit = true,
   orbitSpeed = 0.04,
   pixelRatioCap = 2,
@@ -986,9 +983,9 @@ export default function SmartFactoryHero({
     tl.call(() => {
       state.phase = "optimize";
       if (hudRefs.phase.current)
-        hudRefs.phase.current.textContent = "Optimization";
+        hudRefs.phase.current.textContent = "MES_ACTIVE";
       if (hudRefs.phaseDetail.current)
-        hudRefs.phaseDetail.current.textContent = "Live tuning · OEE climbing";
+        hudRefs.phaseDetail.current.textContent = "CONTINUOUS_FLOW (ZERO_BOTTLENECKS)";
     });
 
     tl.to(state, { oee: 85, duration: 3, ease: "power1.inOut" });
@@ -1013,9 +1010,9 @@ export default function SmartFactoryHero({
     tl.call(() => {
       state.phase = "reset";
       if (hudRefs.phase.current)
-        hudRefs.phase.current.textContent = "Shutdown";
+        hudRefs.phase.current.textContent = "MANUAL_OVERRIDE";
       if (hudRefs.phaseDetail.current)
-        hudRefs.phaseDetail.current.textContent = "Graceful shutdown";
+        hudRefs.phaseDetail.current.textContent = "DISABLED (BOTTLENECK_DETECTED)";
       pushLog("↻ shutting down production line");
     });
     tl.to(state, {
@@ -1031,8 +1028,8 @@ export default function SmartFactoryHero({
     tl.to({}, { duration: 2 });
     tl.call(() => {
       state.phase = "optimize";
-      if (hudRefs.phase.current) hudRefs.phase.current.textContent = "Activation";
-      if (hudRefs.phaseDetail.current) hudRefs.phaseDetail.current.textContent = "Machines warming up";
+      if (hudRefs.phase.current) hudRefs.phase.current.textContent = "INITIALIZING_MES...";
+      if (hudRefs.phaseDetail.current) hudRefs.phaseDetail.current.textContent = "RESOLVING_BOTTLENECK...";
       pushLog("→ restarting production line");
     });
     tl.to(state, {
@@ -1714,18 +1711,23 @@ export default function SmartFactoryHero({
           color: ${palette.hudAccent};
           margin-left: 2px;
         }
-        .sfh-root .sfh-title {
-          top: 20px; left: 24px; max-width: 260px;
-          background: transparent; border: none; box-shadow: none; padding: 0;
+        .sfh-root .sfh-phase {
+          top: 16px; right: 20px; min-width: 0; text-align: right;
+          padding: 7px 10px;
+          background: rgba(20,10,40,0.35);
+          border-color: rgba(180,130,255,0.18);
+          box-shadow: none;
         }
-        .sfh-root .sfh-title .t1 {
-          font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
-          color: ${palette.hudAccent}; opacity: 0.9; margin-bottom: 6px;
+        .sfh-root .sfh-mono {
+          font-family: 'SF Mono', Menlo, Consolas, monospace;
+          font-size: 10px; font-weight: 500; letter-spacing: 0.3px; line-height: 1.4;
+          color: rgba(255,255,255,0.7);
         }
-        .sfh-root .sfh-title .t2 {
-          font-size: 15px; font-weight: 400; color: #fff; line-height: 1.4;
+        .sfh-root .sfh-mono-dim {
+          font-family: 'SF Mono', Menlo, Consolas, monospace;
+          font-size: 10px; font-weight: 400; letter-spacing: 0.3px; line-height: 1.4;
+          color: ${palette.hudMuted};
         }
-        .sfh-root .sfh-phase { top: 20px; right: 24px; min-width: 160px; text-align: right; }
         .sfh-root .sfh-phase-dot {
           display: inline-block; width: 7px; height: 7px; border-radius: 50%;
           background: #C895FF; box-shadow: 0 0 10px #C895FF;
@@ -1736,26 +1738,39 @@ export default function SmartFactoryHero({
           0%,100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(1.3); }
         }
-        .sfh-root .sfh-oee { bottom: 24px; left: 24px; min-width: 180px; }
-        .sfh-root .sfh-thr { bottom: 24px; left: 228px; min-width: 160px; }
-        .sfh-root .sfh-lat { bottom: 24px; left: 410px; min-width: 140px; }
-        .sfh-root .sfh-log {
-          bottom: 24px; right: 24px; min-width: 240px;
-          font-family: 'SF Mono', Menlo, Consolas, monospace;
-          font-size: 11px; line-height: 1.7;
+        .sfh-root .sfh-metrics {
+          top: 16px; left: 20px;
+          display: flex; align-items: stretch; gap: 0;
+          padding: 8px 14px;
+          background: rgba(20,10,40,0.35);
+          border-color: rgba(180,130,255,0.18);
+          box-shadow: none;
         }
-        .sfh-root .sfh-log-line { color: #D9C6FF; opacity: 0.9; }
-        .sfh-root .sfh-log-tag { color: ${palette.hudMuted}; margin-right: 6px; }
-        .sfh-root .sfh-log-new { animation: sfh-logIn 0.4s ease-out; }
-        @keyframes sfh-logIn {
-          from { opacity: 0; transform: translateX(6px); }
-          to { opacity: 0.9; transform: translateX(0); }
+        .sfh-root .sfh-m-item { padding: 0 14px; }
+        .sfh-root .sfh-m-item:first-child { padding-left: 2px; }
+        .sfh-root .sfh-m-item:last-child  { padding-right: 2px; }
+        .sfh-root .sfh-m-label {
+          font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+          color: ${palette.hudMuted}; opacity: 0.75; margin-bottom: 3px;
         }
-        .sfh-root .sfh-spark { width: 100%; height: 28px; margin-top: 6px; }
+        .sfh-root .sfh-m-val {
+          font-size: 17px; font-weight: 300;
+          color: rgba(255,255,255,0.75);
+          font-variant-numeric: tabular-nums;
+        }
+        .sfh-root .sfh-m-unit {
+          font-size: 10px; color: ${palette.hudMuted}; margin-left: 2px;
+        }
+        .sfh-root .sfh-m-sep {
+          width: 1px; background: rgba(180,130,255,0.18); margin: 2px 0;
+        }
+        .sfh-root .sfh-spark {
+          width: 72px; height: 16px; margin-top: 5px; display: block; opacity: 0.7;
+        }
 
         @media (max-width: 720px) {
-          .sfh-root .sfh-thr, .sfh-root .sfh-lat, .sfh-root .sfh-log { display: none; }
-          .sfh-root .sfh-title { max-width: 180px; }
+          .sfh-root .sfh-m-item.sfh-m-hide { display: none; }
+          .sfh-root .sfh-m-sep.sfh-m-hide  { display: none; }
         }
       `}</style>
 
@@ -1765,74 +1780,48 @@ export default function SmartFactoryHero({
 
       {showHUD && (
         <div className="sfh-hud">
-          {showTitle && (
-            <div className="sfh-card sfh-title">
-              <div className="t1">{titleKicker}</div>
-              <div className="t2">{titleText}</div>
-            </div>
-          )}
-
           <div className="sfh-card sfh-phase">
-            <div className="sfh-label">
-              <span className="sfh-phase-dot" />
-              <span ref={hudRefs.phase}>Initializing</span>
+            <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: palette.hudMuted, opacity: 0.7, marginBottom: 2 }}>
+              <span className="sfh-phase-dot" style={{ width: 5, height: 5, boxShadow: "0 0 6px #C895FF" }} />
+              Status
             </div>
-            <div
-              className="sfh-value"
-              style={{ fontSize: 13, fontWeight: 400 }}
-              ref={hudRefs.phaseDetail}
-            >
-              Awaiting deployment
+            <div className="sfh-mono" ref={hudRefs.phase}>MES_ACTIVE</div>
+            <div style={{ fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: palette.hudMuted, opacity: 0.7, marginTop: 6, marginBottom: 2 }}>
+              Optimization
+            </div>
+            <div className="sfh-mono-dim" ref={hudRefs.phaseDetail}>CONTINUOUS_FLOW (ZERO_BOTTLENECKS)</div>
+          </div>
+
+          <div className="sfh-card sfh-metrics">
+            <div className="sfh-m-item">
+              <div className="sfh-m-label">OEE</div>
+              <div className="sfh-m-val">
+                <span ref={hudRefs.oee}>60</span>
+                <span className="sfh-m-unit">%</span>
+              </div>
+              <svg className="sfh-spark" viewBox="0 0 180 28" preserveAspectRatio="none">
+                <path ref={hudRefs.sparkPath} d="M0 20 L180 20" fill="none" stroke={palette.hudAccent} strokeWidth="1.5" strokeLinejoin="round" />
+                <path ref={hudRefs.sparkArea} d="M0 28 L0 20 L180 20 L180 28 Z" fill="rgba(178,137,255,0.15)" />
+              </svg>
+            </div>
+            <div className="sfh-m-sep sfh-m-hide" />
+            <div className="sfh-m-item sfh-m-hide">
+              <div className="sfh-m-label">Throughput</div>
+              <div className="sfh-m-val">
+                <span ref={hudRefs.thr}>0</span>
+                <span className="sfh-m-unit">u/h</span>
+              </div>
+            </div>
+            <div className="sfh-m-sep sfh-m-hide" />
+            <div className="sfh-m-item sfh-m-hide">
+              <div className="sfh-m-label">Latency</div>
+              <div className="sfh-m-val">
+                <span ref={hudRefs.lat}>—</span>
+                <span className="sfh-m-unit">ms</span>
+              </div>
             </div>
           </div>
 
-          <div className="sfh-card sfh-oee">
-            <div className="sfh-label">OEE</div>
-            <div className="sfh-value">
-              <span ref={hudRefs.oee}>60</span>
-              <span className="sfh-unit">%</span>
-            </div>
-            <svg
-              className="sfh-spark"
-              viewBox="0 0 180 28"
-              preserveAspectRatio="none"
-            >
-              <path
-                ref={hudRefs.sparkPath}
-                d="M0 20 L180 20"
-                fill="none"
-                stroke={palette.hudAccent}
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path
-                ref={hudRefs.sparkArea}
-                d="M0 28 L0 20 L180 20 L180 28 Z"
-                fill="rgba(178,137,255,0.15)"
-              />
-            </svg>
-          </div>
-
-          <div className="sfh-card sfh-thr">
-            <div className="sfh-label">Throughput</div>
-            <div className="sfh-value">
-              <span ref={hudRefs.thr}>0</span>
-              <span className="sfh-unit">u/h</span>
-            </div>
-          </div>
-
-          <div className="sfh-card sfh-lat">
-            <div className="sfh-label">Latency</div>
-            <div className="sfh-value">
-              <span ref={hudRefs.lat}>—</span>
-              <span className="sfh-unit">ms</span>
-            </div>
-          </div>
-
-          <div className="sfh-card sfh-log">
-            <div className="sfh-label">System log</div>
-            <div ref={hudRefs.log} />
-          </div>
         </div>
       )}
     </div>
