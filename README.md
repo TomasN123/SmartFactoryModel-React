@@ -10,9 +10,9 @@ A 3D animated smart factory visualization built with React, Three.js, and GSAP. 
 ##  Tech Stack
 
 - **React 18**
-- **Three.js** — 3D scene, geometry, materials
-- **GSAP** — animation timeline (metrics, machine states)
-- **Vite** — dev server & build
+- **Three.js** - 3D scene, geometry, materials
+- **GSAP** - animation timeline (metrics, machine states)
+- **Vite** - dev server & build
 
 ---
 
