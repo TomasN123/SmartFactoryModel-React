@@ -1712,24 +1712,24 @@ export default function SmartFactoryHero({
           margin-left: 2px;
         }
         .sfh-root .sfh-phase {
-          top: 16px; right: 20px; min-width: 0; text-align: right;
-          padding: 7px 10px;
-          background: rgba(20,10,40,0.35);
-          border-color: rgba(180,130,255,0.18);
+          top: 20px; right: 24px; min-width: 0; text-align: right;
+          padding: 12px 16px;
+          background: rgba(20,10,40,0.45);
+          border-color: rgba(180,130,255,0.22);
           box-shadow: none;
         }
         .sfh-root .sfh-mono {
           font-family: 'SF Mono', Menlo, Consolas, monospace;
-          font-size: 10px; font-weight: 500; letter-spacing: 0.3px; line-height: 1.4;
-          color: rgba(255,255,255,0.7);
+          font-size: 13px; font-weight: 500; letter-spacing: 0.3px; line-height: 1.4;
+          color: rgba(255,255,255,0.85);
         }
         .sfh-root .sfh-mono-dim {
           font-family: 'SF Mono', Menlo, Consolas, monospace;
-          font-size: 10px; font-weight: 400; letter-spacing: 0.3px; line-height: 1.4;
+          font-size: 12px; font-weight: 400; letter-spacing: 0.3px; line-height: 1.4;
           color: ${palette.hudMuted};
         }
         .sfh-root .sfh-phase-dot {
-          display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+          display: inline-block; width: 8px; height: 8px; border-radius: 50%;
           background: #C895FF; box-shadow: 0 0 10px #C895FF;
           margin-right: 6px; vertical-align: middle;
           animation: sfh-pulse 1.4s ease-in-out infinite;
@@ -1739,33 +1739,33 @@ export default function SmartFactoryHero({
           50% { opacity: 0.5; transform: scale(1.3); }
         }
         .sfh-root .sfh-metrics {
-          top: 16px; left: 20px;
+          top: 20px; left: 24px;
           display: flex; align-items: stretch; gap: 0;
-          padding: 8px 14px;
-          background: rgba(20,10,40,0.35);
-          border-color: rgba(180,130,255,0.18);
+          padding: 12px 18px;
+          background: rgba(20,10,40,0.45);
+          border-color: rgba(180,130,255,0.22);
           box-shadow: none;
         }
-        .sfh-root .sfh-m-item { padding: 0 14px; }
+        .sfh-root .sfh-m-item { padding: 0 18px; }
         .sfh-root .sfh-m-item:first-child { padding-left: 2px; }
         .sfh-root .sfh-m-item:last-child  { padding-right: 2px; }
         .sfh-root .sfh-m-label {
-          font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-          color: ${palette.hudMuted}; opacity: 0.75; margin-bottom: 3px;
+          font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+          color: ${palette.hudMuted}; opacity: 0.85; margin-bottom: 4px;
         }
         .sfh-root .sfh-m-val {
-          font-size: 17px; font-weight: 300;
-          color: rgba(255,255,255,0.75);
+          font-size: 26px; font-weight: 300;
+          color: rgba(255,255,255,0.85);
           font-variant-numeric: tabular-nums;
         }
         .sfh-root .sfh-m-unit {
-          font-size: 10px; color: ${palette.hudMuted}; margin-left: 2px;
+          font-size: 13px; color: ${palette.hudMuted}; margin-left: 3px;
         }
         .sfh-root .sfh-m-sep {
-          width: 1px; background: rgba(180,130,255,0.18); margin: 2px 0;
+          width: 1px; background: rgba(180,130,255,0.22); margin: 2px 0;
         }
         .sfh-root .sfh-spark {
-          width: 72px; height: 16px; margin-top: 5px; display: block; opacity: 0.7;
+          width: 90px; height: 20px; margin-top: 6px; display: block; opacity: 0.75;
         }
 
         @media (max-width: 720px) {
