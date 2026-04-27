@@ -1,6 +1,6 @@
 # SmartFactoryHero
 
-A 3D animated smart factory visualization built with React, Three.js, and GSAP. Designed as a portfolio hero component — shows conveyor belts, a robot arm, CNC press, QC scanner, AGV, and a live MES dashboard with OEE metrics.
+A 3D animated smart factory visualization built with React, Three.js, and GSAP. Designed as a portfolio hero component - shows conveyor belts, a robot arm, CNC press, QC scanner, AGV, and a live MES dashboard with OEE metrics.
 
 ![Smart Factory demo](model.gif)
 
