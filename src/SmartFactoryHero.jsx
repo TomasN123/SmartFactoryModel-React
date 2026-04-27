@@ -453,6 +453,37 @@ export default function SmartFactoryHero({
     factory.add(stInt);
     disposables.push(stIntGeo, stIntMat);
 
+    // ============ SHRINK TUNNEL BEACON ============
+    const beaconPoleGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.45, 8);
+    const beaconPoleMat = new THREE.MeshBasicMaterial({ color: 0x1a0f2e });
+    const beaconPole = new THREE.Mesh(beaconPoleGeo, beaconPoleMat);
+    beaconPole.position.set(SHRINK_X, 2.52, BELT2_Z - 0.6);
+    factory.add(beaconPole);
+
+    const beaconGeo = new THREE.SphereGeometry(0.13, 12, 12);
+    const beaconMat = new THREE.MeshBasicMaterial({
+      color: 0x550000,
+      transparent: true,
+      opacity: 0.9,
+    });
+    const beacon = new THREE.Mesh(beaconGeo, beaconMat);
+    beacon.position.set(SHRINK_X, 2.88, BELT2_Z - 0.6);
+    factory.add(beacon);
+
+    // outer glow ring
+    const beaconRingGeo = new THREE.TorusGeometry(0.18, 0.03, 8, 24);
+    const beaconRingMat = new THREE.MeshBasicMaterial({
+      color: 0x550000,
+      transparent: true,
+      opacity: 0.0,
+    });
+    const beaconRing = new THREE.Mesh(beaconRingGeo, beaconRingMat);
+    beaconRing.position.copy(beacon.position);
+    beaconRing.rotation.x = Math.PI / 2;
+    factory.add(beaconRing);
+
+    disposables.push(beaconPoleGeo, beaconPoleMat, beaconGeo, beaconMat, beaconRingGeo, beaconRingMat);
+
     // ============ HMI PANEL ============
     const hmiX = -2.6;
     const hmiBaseZ = 3;
@@ -842,6 +873,45 @@ export default function SmartFactoryHero({
     const ambient = new THREE.Points(ambGeo, ambMat);
     scene.add(ambient);
     disposables.push(ambGeo, ambMat);
+
+    // ============ STARFIELD ============
+    const STAR_COUNT = 1800;
+    const starPos = new Float32Array(STAR_COUNT * 3);
+    const starVX  = new Float32Array(STAR_COUNT);
+    const starVY  = new Float32Array(STAR_COUNT);
+    const starVZ  = new Float32Array(STAR_COUNT);
+
+    for (let i = 0; i < STAR_COUNT; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      const r = 72 + Math.random() * 28;
+      starPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      starPos[i * 3 + 1] = r * Math.cos(phi) + 5;
+      starPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      const speed = 0.8 + Math.random() * 1.6;
+      const vTheta = Math.random() * Math.PI * 2;
+      const vPhi   = Math.acos(2 * Math.random() - 1);
+      starVX[i] = speed * Math.sin(vPhi) * Math.cos(vTheta);
+      starVY[i] = speed * Math.cos(vPhi) * 0.5;
+      starVZ[i] = speed * Math.sin(vPhi) * Math.sin(vTheta);
+    }
+
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+
+    const starMat = new THREE.PointsMaterial({
+      size: 2.0,
+      sizeAttenuation: false,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      fog: false,
+      color: 0xe0d8ff,
+    });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+    disposables.push(starGeo, starMat);
 
     const lineMat = new THREE.LineBasicMaterial({
       color: palette.active,
@@ -1418,6 +1488,32 @@ export default function SmartFactoryHero({
       }
     }
 
+    // ============ BEACON ============
+    function updateBeacon() {
+      const t = performance.now() * 0.001;
+      const boxInTunnel = boxes.some(
+        (b) =>
+          b.state === "on_belt2" &&
+          b.mesh.position.x >= SHRINK_X - 1.45 &&
+          b.mesh.position.x <= SHRINK_X + 1.45
+      );
+
+      if (boxInTunnel) {
+        const pulse = 0.65 + 0.35 * Math.sin(t * 9);
+        beaconMat.color.setHex(0x00ff66);
+        beaconMat.opacity = pulse;
+        beaconRingMat.color.setHex(0x00ff66);
+        beaconRingMat.opacity = (1 - pulse) * 0.6;
+        beaconRing.scale.setScalar(1 + (1 - pulse) * 0.5);
+      } else {
+        const idle = 0.25 + 0.15 * Math.sin(t * 1.2);
+        beaconMat.color.setHex(0xff2200);
+        beaconMat.opacity = idle;
+        beaconRingMat.opacity = 0;
+        beaconRing.scale.setScalar(1);
+      }
+    }
+
     // ============ CLOUD ANIMATION ============
     function updateCloud() {
       const t = performance.now() * 0.001;
@@ -1468,6 +1564,7 @@ export default function SmartFactoryHero({
       updateRobot(dt);
       updateBoxes(dt);
       updateAGV(dt);
+      updateBeacon();
       updateCloud();
       updateHUD();
 
@@ -1477,6 +1574,25 @@ export default function SmartFactoryHero({
         if (ap.array[i * 3 + 1] > 12) ap.array[i * 3 + 1] = 0;
       }
       ap.needsUpdate = true;
+
+      const st = performance.now() * 0.001;
+      const sa = starGeo.attributes.position;
+      for (let i = 0; i < STAR_COUNT; i++) {
+        sa.array[i * 3]     += starVX[i] * dt;
+        sa.array[i * 3 + 1] += starVY[i] * dt;
+        sa.array[i * 3 + 2] += starVZ[i] * dt;
+        const x = sa.array[i * 3], y = sa.array[i * 3 + 1], z = sa.array[i * 3 + 2];
+        if (x*x + y*y + z*z > 110*110) {
+          const theta = Math.random() * Math.PI * 2;
+          const phi = Math.acos(2 * Math.random() - 1);
+          const r = 72 + Math.random() * 28;
+          sa.array[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+          sa.array[i * 3 + 1] = r * Math.cos(phi) + 5;
+          sa.array[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+        }
+      }
+      sa.needsUpdate = true;
+      starMat.opacity = 0.75 + 0.10 * Math.sin(st * 0.28);
 
       renderer.render(scene, camera);
       rafId = requestAnimationFrame(animate);
